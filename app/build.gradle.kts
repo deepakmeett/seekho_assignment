@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger.hilt)
 }
 
 android {
@@ -56,4 +58,23 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //hilt
+    implementation(libs.hilt)
+    implementation(libs.hilt.navigation)
+    ksp(libs.hilt.compiler)
+
+    //networking
+    implementation(libs.retrofit)
+    implementation(libs.okhttpLoggingInterceptor)
+    implementation(libs.okhttp)
+
+    //coil
+    implementation(libs.coil)
+//    implementation(libs.coilsvg)
+//    implementation(libs.coilgif)
+
+    // Integration with ViewModels
+    implementation(libs.viewmodel)
+    implementation(libs.navigation)
 }

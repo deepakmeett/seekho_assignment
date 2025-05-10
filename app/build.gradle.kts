@@ -66,6 +66,7 @@ dependencies {
 
     //networking
     implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.okhttpLoggingInterceptor)
     implementation(libs.okhttp)
 

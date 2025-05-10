@@ -98,7 +98,7 @@ fun ListDataCompose(
                     data.synopsis.orEmpty(),
                     data.images?.jpg?.largeImageUrl.orEmpty()
                 ) {
-                    navController.navigate("${NavRoutes.DETAILS_SCREEN}/${data.malId}")
+                    navController.navigate("${NavRoutes.DETAILS_SCREEN}/${data.trailer?.youtubeId ?: ""}")
                 }
             }
         }

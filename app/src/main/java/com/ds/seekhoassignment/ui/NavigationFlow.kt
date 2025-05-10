@@ -33,9 +33,9 @@ internal fun AppNavigation(navController: NavHostController) {
 
         composable(
             route = NavRoutes.DETAILS_SCREEN_WITH_ARG,
-            arguments = listOf(navArgument(NAV_PARAM_ANIME_ID) { type = NavType.IntType })
+            arguments = listOf(navArgument(NAV_PARAM_ANIME_ID) { type = NavType.StringType })
         ) { backStackEntry ->
-            val animeId = backStackEntry.arguments?.getInt(NAV_PARAM_ANIME_ID) ?: 0
+            val animeId = backStackEntry.arguments?.getString(NAV_PARAM_ANIME_ID) ?: ""
             DetailsScreen(navController = navController, animeId = animeId)
         }
     }

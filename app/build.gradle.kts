@@ -72,10 +72,11 @@ dependencies {
 
     //coil
     implementation(libs.coil)
-//    implementation(libs.coilsvg)
-//    implementation(libs.coilgif)
 
     // Integration with ViewModels
     implementation(libs.viewmodel)
     implementation(libs.navigation)
+
+    //Youtube Player
+    implementation(libs.youtubePlayer)
 }

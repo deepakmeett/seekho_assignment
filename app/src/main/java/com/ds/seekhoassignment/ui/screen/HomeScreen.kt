@@ -202,11 +202,23 @@ fun PreviewHomeScreen() {
         ) {
             Header("Popular Anime ")
             AnimeCard(
-                "Sousa no Friend",
+                "Friends",
                 "9.3",
                 10,
                 "https://cdn.myanimelist.net/images/anime/1015/138006l.jpg"
             ) {}
+            AnimeCard(
+                "John Wick",
+                "8.2",
+                13,
+                "https://cdn.myanimelist.net/images/anime/1015/138006l.jpg"
+            ) {}
+            AnimeCard(
+                "Harry Potter",
+                "7.5",
+                14,
+                "https://cdn.myanimelist.net/images/anime/1015/138006l.jpg"
+            ){}
 
         }
     }

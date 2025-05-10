@@ -1,6 +1,7 @@
 package com.ds.seekhoassignment.data.repository
 
 import android.util.Log
+import com.ds.seekhoassignment.data.model.AnimeDetailResponse
 import com.ds.seekhoassignment.data.model.Data
 import com.ds.seekhoassignment.data.networking.AnimeService
 import javax.inject.Inject
@@ -20,5 +21,17 @@ class AnimeRepositoryImpl @Inject constructor(
             null
         }
     }
+
+    override suspend fun fetchAnimeById(id: Int): AnimeDetailResponse? {
+        val response = animeService.getAnimeById(id)
+        Log.i("API -> ", "fetchAnimeList: $response")
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            Log.e("API -> ", "Error: ${response.errorBody()?.string()}")
+            null
+        }
+    }
+
 }
 

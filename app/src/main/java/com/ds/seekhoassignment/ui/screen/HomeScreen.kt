@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.ds.seekhoassignment.data.model.Data
+import com.ds.seekhoassignment.data.viewModel.AnimeUiEvent
 import com.ds.seekhoassignment.data.viewModel.AnimeViewModel
 import com.ds.seekhoassignment.ui.NavRoutes
 import com.ds.seekhoassignment.ui.theme.SeekhoAssignmentTheme
@@ -51,6 +53,10 @@ import com.ds.seekhoassignment.ui.theme.SeekhoAssignmentTheme
 @Composable
 internal fun HomeScreen(navController: NavHostController) {
     val viewModel = hiltViewModel<AnimeViewModel>()
+
+    LaunchedEffect(Unit) {
+        viewModel.setEvent(AnimeUiEvent.LoadAnimeList)
+    }
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -95,7 +101,7 @@ fun ListDataCompose(
                     data.titles?.size ?: 0,
                     data.images?.jpg?.largeImageUrl.orEmpty()
                 ) {
-                    navController.navigate("${NavRoutes.DETAILS_SCREEN}/${data.trailer?.youtubeId ?: ""}")
+                    navController.navigate("${NavRoutes.DETAILS_SCREEN}/${data.malId ?: ""}")
                 }
             }
         }
@@ -218,7 +224,7 @@ fun PreviewHomeScreen() {
                 "7.5",
                 14,
                 "https://cdn.myanimelist.net/images/anime/1015/138006l.jpg"
-            ){}
+            ) {}
 
         }
     }

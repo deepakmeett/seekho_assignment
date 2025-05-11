@@ -1,5 +1,6 @@
 package com.ds.seekhoassignment.ui.screen
 
+import android.R.attr.data
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -141,12 +142,16 @@ private fun Header(title: String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            title,
-            color = Color(0xFFE1DEDE),
+            text = title,
+            color = Color(0xffCCCCCC),
             style = MaterialTheme.typography.bodyLarge.copy(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 40.sp
+            ),
+            modifier = Modifier.wrapContentHeight(),
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
         )
     }
 }

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -217,7 +218,6 @@ private fun AnimeData(data: Data?) {
                 Brush.verticalGradient(
                     colors = listOf(
                         Color(0xFF000000),
-//                        Color(0xFF000000),
                         Color(0xFF2D2B28)
                     )
                 )
@@ -317,7 +317,8 @@ private fun AnimeData(data: Data?) {
                         modifier = Modifier
                             .padding(end = 7.dp)
                             .widthIn(max = 140.dp)
-                            .background(
+                            .border(
+                                width = 1.dp,
                                 color = Color(0xFF414444),
                                 shape = RoundedCornerShape(4.dp)
                             )

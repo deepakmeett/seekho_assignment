@@ -229,7 +229,8 @@ fun AnimeCard(
                         Text(
                             modifier = Modifier
                                 .widthIn(max = 140.dp)
-                                .background(
+                                .border(
+                                    width = 1.dp,
                                     color = Color(0xFF414444),
                                     shape = RoundedCornerShape(4.dp)
                                 )
@@ -245,7 +246,8 @@ fun AnimeCard(
                         Row(
                             modifier = Modifier
                                 .padding(start = 5.dp)
-                                .background(
+                                .border(
+                                    width = 1.dp,
                                     color = Color(0xFF414444),
                                     shape = RoundedCornerShape(4.dp)
                                 )

@@ -37,9 +37,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -143,20 +147,24 @@ private fun VideoOrThumbnail(data: Data?, navController: NavHostController) {
 }
 
 @Composable
-fun YoutubeVideoPlayer(
-    videoId: String
-) {
-    AndroidView(factory = {
-        var view = YouTubePlayerView(it)
-        val fragment = view.addYouTubePlayerListener(
-            object : AbstractYouTubePlayerListener() {
-                override fun onReady(youTubePlayer: YouTubePlayer) {
-                    super.onReady(youTubePlayer)
-                    youTubePlayer.loadVideo(videoId, 0f)
+fun YoutubeVideoPlayer(videoId: String) {
+    var youTubePlayerInstance by remember { mutableStateOf<YouTubePlayer?>(null) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            youTubePlayerInstance?.pause()
+        }
+    }
+
+    AndroidView(factory = { context ->
+        YouTubePlayerView(context).apply {
+            addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+                override fun onReady(player: YouTubePlayer) {
+                    youTubePlayerInstance = player
+                    player.loadVideo(videoId, 0f)
                 }
-            }
-        )
-        view
+            })
+        }
     })
 }
 

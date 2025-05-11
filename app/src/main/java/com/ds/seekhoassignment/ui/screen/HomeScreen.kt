@@ -1,6 +1,5 @@
 package com.ds.seekhoassignment.ui.screen
 
-import android.R.attr.data
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -68,6 +67,8 @@ internal fun HomeScreen(navController: NavHostController) {
 
     val effectFlow = viewModel.effect
 
+    val isConnected = viewModel.isConnected.collectAsState()
+
 
     LaunchedEffect(Unit) {
         viewModel.setEvent(AnimeUiEvent.LoadAnimeList)
@@ -82,6 +83,21 @@ internal fun HomeScreen(navController: NavHostController) {
     }
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        if (!isConnected.value) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .background(color = Color(0xFFFF0000)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    text = "Connection lost..."
+                )
+            }
+        }
         ListDataCompose(
             uiState,
             modifier = Modifier

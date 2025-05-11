@@ -82,6 +82,8 @@ internal fun DetailsScreen(navController: NavHostController, animeId: Int = 0) {
 
     val effectFlow = viewModel.effect
 
+    val isConnected = viewModel.isConnected.collectAsState()
+
     LaunchedEffect(animeId) {
         viewModel.setEvent(AnimeUiEvent.LoadAnimeById(animeId))
 
@@ -94,22 +96,39 @@ internal fun DetailsScreen(navController: NavHostController, animeId: Int = 0) {
         }
     }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        if (uiState.isLoading) {
+    Box {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            if (uiState.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (data != null) {
+                VideoOrThumbnail(data, navController)
+                AnimeData(data)
+            }
+        }
+        if (!isConnected.value) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize(),
+                Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .background(color = Color(0xFFFF0000)),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                Text(
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    text = "Connection lost..."
+                )
             }
-        } else if (data != null) {
-            VideoOrThumbnail(data, navController)
-            AnimeData(data)
         }
     }
 }

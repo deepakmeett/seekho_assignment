@@ -4,16 +4,27 @@ import androidx.lifecycle.viewModelScope
 import com.ds.seekhoassignment.data.model.AnimeDetailResponse
 import com.ds.seekhoassignment.data.model.Data
 import com.ds.seekhoassignment.data.repository.AnimeRepository
+import com.ds.seekhoassignment.data.utils.ConnectivityObserver
 import com.ds.seekhoassignment.data.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AnimeViewModel @Inject constructor(
-    private val repository: AnimeRepository
+    private val repository: AnimeRepository,
+    private val connectivityObserver: ConnectivityObserver
 ) : BaseViewModel<AnimeUiEvent, AnimeUiState, AnimeUiEffect>() {
 
+    val isConnected = connectivityObserver
+        .isConnected
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
 
     override fun createInitialState(): AnimeUiState = AnimeUiState()
 

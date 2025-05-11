@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -91,15 +92,7 @@ internal fun DetailsScreen(navController: NavHostController, animeId: Int = 0) {
     Column(
         Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF000000),
-                        Color(0xFF000000),
-                        Color(0xFF2D2B28)
-                    )
-                )
-            )
+            .background(MaterialTheme.colorScheme.background)
     ) {
         if (uiState.isLoading) {
             Box(
@@ -209,140 +202,154 @@ private fun ThumbnailImage(imageUrl: String?) {
 @SuppressLint("DefaultLocale")
 @Composable
 private fun AnimeData(data: Data?) {
-    Column(
-        Modifier
-            .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
-            .padding(start = 16.dp, end = 16.dp, top = 5.dp, bottom = 30.dp)
-    ) {
-        Text(
-            text = data?.title.toString().trim(),
-            color = Color(0xffCCCCCC),
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontSize = 35.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 40.sp
-            ),
-            modifier = Modifier.wrapContentHeight(),
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Start,
-        )
-
-        Spacer(Modifier.height(5.dp))
-
-        Row(
-            modifier = Modifier
-                .padding(vertical = 3.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Text(
-                text = "Episodes: ",
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
-                ),
-                color = Color(0xFF9B9797),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-            )
-
-            Text(
-                text = "${data?.episodes}",
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontSize = 14.sp
-                ),
-                color = Color(0xffCCCCCC),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-            )
-
-            Box(
-                Modifier
-                    .padding(horizontal = 10.dp)
-                    .width(1.5.dp)
-                    .height(15.dp)
-                    .background(Color(0xffCCCCCC))
-            )
-
-            for (i in 1..5) {
-                Icon(
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "Star $i",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier
-                        .size(16.dp)
-                        .padding(end = 2.dp)
-
+    Box(
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF000000),
+//                        Color(0xFF000000),
+                        Color(0xFF2D2B28)
+                    )
                 )
-            }
-
-            Text(
-                text = String.format("%.1f", data?.score ?: 0f),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xffCCCCCC),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
             )
-        }
-
-        Spacer(Modifier.height(5.dp))
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(vertical = 10.dp)
+    ) {
+        Column(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 5.dp, bottom = 30.dp)
         ) {
+            Text(
+                text = data?.title.toString().trim(),
+                color = Color(0xffCCCCCC),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 35.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 40.sp
+                ),
+                modifier = Modifier.wrapContentHeight(),
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+            )
 
-            items(data?.genres?.size ?: 0) { index ->
-                val genreData = data?.genres?.get(index)
+            Spacer(Modifier.height(5.dp))
+
+            Row(
+                modifier = Modifier
+                    .padding(vertical = 3.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Text(
-                    modifier = Modifier
-                        .padding(end = 7.dp)
-                        .widthIn(max = 140.dp)
-                        .background(
-                            color = Color(0xFF414444),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(horizontal = 7.dp, vertical = 5.dp),
-                    text = genreData?.name.toString(),
+                    text = "Episodes: ",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    ),
+                    color = Color(0xFF9B9797),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                )
+
+                Text(
+                    text = "${data?.episodes}",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 14.sp
+                    ),
+                    color = Color(0xffCCCCCC),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                )
+
+                Box(
+                    Modifier
+                        .padding(horizontal = 10.dp)
+                        .width(1.5.dp)
+                        .height(15.dp)
+                        .background(Color(0xffCCCCCC))
+                )
+
+                for (i in 1..5) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Star $i",
+                        tint = Color(0xFFFFC107),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 2.dp)
+
+                    )
+                }
+
+                Text(
+                    text = String.format("%.1f", data?.score ?: 0f),
                     style = MaterialTheme.typography.bodySmall,
-                    fontSize = 14.sp,
                     color = Color(0xffCCCCCC),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
                 )
             }
+
+            Spacer(Modifier.height(5.dp))
+
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(vertical = 10.dp)
+            ) {
+
+                items(data?.genres?.size ?: 0) { index ->
+                    val genreData = data?.genres?.get(index)
+
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 7.dp)
+                            .widthIn(max = 140.dp)
+                            .background(
+                                color = Color(0xFF414444),
+                                shape = RoundedCornerShape(4.dp)
+                            )
+                            .padding(horizontal = 7.dp, vertical = 5.dp),
+                        text = genreData?.name.toString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 14.sp,
+                        color = Color(0xffCCCCCC),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(
+                text = "Synopsis",
+                color = Color(0xffCCCCCC),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+            )
+
+            Spacer(Modifier.height(5.dp))
+
+            Text(
+                text = data?.synopsis.toString(),
+                style = MaterialTheme.typography.titleSmall,
+                color = Color(0xFF9B9797),
+                fontSize = 14.sp,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Start,
+            )
         }
-
-        Spacer(Modifier.height(8.dp))
-
-        Text(
-            text = "Synopsis",
-            color = Color(0xffCCCCCC),
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(Modifier.height(5.dp))
-
-        Text(
-            text = data?.synopsis.toString(),
-            style = MaterialTheme.typography.titleSmall,
-            color = Color(0xFF9B9797),
-            fontSize = 14.sp,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Start,
-        )
     }
 }
 
@@ -354,15 +361,6 @@ fun PreviewDetailsScreen() {
     Column(
         Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF000000),
-                        Color(0xFF000000),
-                        Color(0xFF2D2B28)
-                    )
-                )
-            )
     ) {
         VideoOrThumbnail(null, rememberNavController())
         AnimeData(null)

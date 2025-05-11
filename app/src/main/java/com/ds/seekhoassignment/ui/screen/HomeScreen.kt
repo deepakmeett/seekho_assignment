@@ -1,5 +1,6 @@
 package com.ds.seekhoassignment.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,8 +45,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
-import com.ds.seekhoassignment.data.model.Data
+import com.ds.seekhoassignment.data.viewModel.AnimeUiEffect
 import com.ds.seekhoassignment.data.viewModel.AnimeUiEvent
+import com.ds.seekhoassignment.data.viewModel.AnimeUiState
 import com.ds.seekhoassignment.data.viewModel.AnimeViewModel
 import com.ds.seekhoassignment.ui.NavRoutes
 import com.ds.seekhoassignment.ui.theme.SeekhoAssignmentTheme
@@ -52,17 +55,29 @@ import com.ds.seekhoassignment.ui.theme.SeekhoAssignmentTheme
 
 @Composable
 internal fun HomeScreen(navController: NavHostController) {
+    val context = LocalContext.current
     val viewModel = hiltViewModel<AnimeViewModel>()
-
-    LaunchedEffect(Unit) {
-        viewModel.setEvent(AnimeUiEvent.LoadAnimeList)
-    }
 
     val uiState by viewModel.uiState.collectAsState()
 
+    val effectFlow = viewModel.effect
+
+
+    LaunchedEffect(Unit) {
+        viewModel.setEvent(AnimeUiEvent.LoadAnimeList)
+
+        effectFlow.collect { effect ->
+            when (effect) {
+                is AnimeUiEffect.ShowError -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         ListDataCompose(
-            uiState.animeListData,
+            uiState,
             modifier = Modifier.padding(innerPadding),
             navController
         )
@@ -72,11 +87,11 @@ internal fun HomeScreen(navController: NavHostController) {
 
 @Composable
 fun ListDataCompose(
-    animeList: List<Data>?,
+    uiState: AnimeUiState,
     modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
-    if (animeList.isNullOrEmpty()) {
+    if (uiState.isLoading) {
         Box(
             modifier = modifier
                 .fillMaxSize(),
@@ -84,7 +99,7 @@ fun ListDataCompose(
         ) {
             CircularProgressIndicator()
         }
-    } else {
+    } else if (!uiState.animeListData.isNullOrEmpty()){
         LazyColumn(
             modifier = modifier.fillMaxWidth(),
             contentPadding = PaddingValues(16.dp)
@@ -93,15 +108,15 @@ fun ListDataCompose(
                 Header("Popular Anime")
             }
 
-            items(animeList.size) { index ->
-                val data = animeList[index]
+            items(uiState.animeListData?.size ?: 0) { index ->
+                val data = uiState.animeListData?.get(index)
                 AnimeCard(
-                    data.title.orEmpty(),
-                    data.score.toString(),
-                    data.titles?.size ?: 0,
-                    data.images?.jpg?.largeImageUrl.orEmpty()
+                    data?.title.orEmpty(),
+                    data?.score.toString(),
+                    data?.titles?.size ?: 0,
+                    data?.images?.jpg?.largeImageUrl.orEmpty()
                 ) {
-                    navController.navigate("${NavRoutes.DETAILS_SCREEN}/${data.malId ?: ""}")
+                    navController.navigate("${NavRoutes.DETAILS_SCREEN}/${data?.malId ?: ""}")
                 }
             }
         }

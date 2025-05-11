@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.ds.seekhoassignment.data.model.AnimeDetailResponse
 import com.ds.seekhoassignment.data.model.Data
 import com.ds.seekhoassignment.data.repository.AnimeRepository
+import com.ds.seekhoassignment.data.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,22 +35,72 @@ class AnimeViewModel @Inject constructor(
 
     private fun loadAnime() {
         viewModelScope.launch {
-            val result = repository.fetchAnimeList()
-            setState {
-                copy(
-                    animeListData = result ?: emptyList()
-                )
+            repository.fetchAnimeList().collect { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        setState { copy(isLoading = true) }
+                    }
+
+                    is Resource.Success -> {
+                        setState {
+                            copy(
+                                isLoading = false,
+                                animeListData = result.data
+                            )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        setEffect {
+                            AnimeUiEffect.ShowError(
+                                if (result.message.isNullOrEmpty()) "Something went wrong" else result.message
+                            )
+                        }
+
+                        setState {
+                            copy(
+                                isLoading = false,
+                                animeListData = emptyList()
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
+
     private fun loadAnimeById(id: Int) {
         viewModelScope.launch {
-            val result = repository.fetchAnimeById(id)
-            setState {
-                copy(
-                    animeDetailsData = result
-                )
+            repository.fetchAnimeById(id).collect {
+                when (it) {
+                    is Resource.Loading -> {
+                        setState { copy(isLoading = true) }
+                    }
+
+                    is Resource.Success -> {
+                        setState {
+                            copy(
+                                isLoading = false,
+                                animeDetailsData = it.data
+                            )
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        setEffect {
+                            AnimeUiEffect.ShowError(
+                                if (it.message.isNullOrEmpty()) "Something went wrong" else it.message
+                            )
+                        }
+                        setState {
+                            copy(
+                                isLoading = false,
+                                animeDetailsData = null
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -64,9 +115,12 @@ sealed class AnimeUiEvent : UiEvent {
 
 data class AnimeUiState(
     var animeListData: List<Data>? = emptyList(),
-    var animeDetailsData: AnimeDetailResponse? = null
+    var animeDetailsData: AnimeDetailResponse? = null,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 ) : UiState
 
-sealed class AnimeUiEffect : UiEffect {
 
+sealed interface AnimeUiEffect : UiEffect {
+    data class ShowError(val message: String) : AnimeUiEffect
 }

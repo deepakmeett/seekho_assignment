@@ -1,8 +1,9 @@
 package com.ds.seekhoassignment.ui.screen
 
 import android.R
-import android.R.attr.data
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,11 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -44,9 +46,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.ds.seekhoassignment.data.model.Data
+import com.ds.seekhoassignment.data.viewModel.AnimeUiEffect
 import com.ds.seekhoassignment.data.viewModel.AnimeUiEvent
 import com.ds.seekhoassignment.data.viewModel.AnimeViewModel
-import com.ds.seekhoassignment.ui.NavRoutes
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -55,13 +57,23 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DetailsScreen(navController: NavHostController, animeId: Int = 0) {
+    val context = LocalContext.current
     val viewModel = hiltViewModel<AnimeViewModel>()
-
     val uiState by viewModel.uiState.collectAsState()
     val data = uiState.animeDetailsData?.data
 
+    val effectFlow = viewModel.effect
+
     LaunchedEffect(animeId) {
         viewModel.setEvent(AnimeUiEvent.LoadAnimeById(animeId))
+
+        effectFlow.collect { effect ->
+            when (effect) {
+                is AnimeUiEffect.ShowError -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     Column(Modifier.fillMaxSize()) {
@@ -76,8 +88,18 @@ internal fun DetailsScreen(navController: NavHostController, animeId: Int = 0) {
                 }
             }
         )
-        VideoOrThumbnail(data)
-        AnimeData(data)
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        } else if (data != null){
+            VideoOrThumbnail(data)
+            AnimeData(data)
+        }
     }
 }
 
@@ -149,7 +171,7 @@ private fun AnimeData(data: Data?) {
         textAlign = TextAlign.Start,
     )
 
-    LazyRow (
+    LazyRow(
         modifier = Modifier.fillMaxWidth(),
         contentPadding = PaddingValues(vertical = 10.dp)
     ) {
@@ -219,7 +241,6 @@ fun PreviewDetailsScreen() {
         VideoOrThumbnail(null)
         AnimeData(null)
     }
-
 }
 
 
